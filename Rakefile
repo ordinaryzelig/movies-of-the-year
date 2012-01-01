@@ -1,0 +1,54 @@
+require 'awesome_print'
+
+# Connect to DB.
+task :connect do
+  require_relative 'db'
+end
+
+task :models do
+  require_relative 'movie'
+end
+
+desc 'Clear data in db.'
+task :reset => :connect do
+  ActiveRecord::Base.connection.execute 'delete from movies;'
+end
+
+desc 'List movies. Optional year argument.'
+task :list, [:year] => [:connect, :models] do |t, args|
+  movies = Movie.by_name
+  movies = movies.watched_in(args.year.to_i) if args.year
+  puts "#{movies.size} movies"
+  movies.group_by(&:name).each do |name, movies|
+    print "#{movies.first.listing}"
+    print " x #{movies.size}" if movies.size > 1
+    puts
+  end
+end
+
+# List best/worst of movies that I haven't watched before.
+task :best_or_worst, [:best_or_worst, :year] => [:connect, :models] do |t, args|
+  year = args.year.to_i
+  movies = Movie.watched_before(false).watched_in(year).send(args.best_or_worst).by_rating.by_name
+  movies.each do |movie|
+    puts movie.listing
+  end
+end
+
+desc 'List best of year.'
+task :best_of, [:year] => [:connect, :models] do |t, args|
+  Rake::Task[:best_or_worst].invoke(:best, args.year)
+end
+
+desc 'List worst of year.'
+task :worst_of, [:year] => [:connect, :models] do |t, args|
+  Rake::Task[:best_or_worst].invoke(:worst, args.year)
+end
+
+desc 'Count by grouping movies that I have watched before'
+task :watched_before_ratio, [:year] => [:connect, :models] do |t, args|
+  movies = Movie.all.group_by(&:watched_before)
+  puts "watched before: #{movies[true].size}"
+  puts "not watched before: #{movies[false].size}"
+  puts "ratio: #{movies[true].size.to_f/movies[false].size.to_f}"
+end

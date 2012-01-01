@@ -1,4 +1,4 @@
-require './moty'
+require_relative 'movie'
 
 Movie.where(:watched_before => nil).each do |movie|
   print "#{movie.name}: "

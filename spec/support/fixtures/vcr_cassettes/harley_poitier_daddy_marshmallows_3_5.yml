@@ -1,0 +1,44 @@
+--- 
+- !ruby/struct:VCR::HTTPInteraction 
+  request: !ruby/struct:VCR::Request 
+    method: :get
+    uri: http://api.themoviedb.org:80/2.1/Movie.search/en/json/<TMDB_KEY>/harley%20poitier%20daddy%20marshmallows%203.5
+    body: 
+    headers: 
+  response: !ruby/struct:VCR::Response 
+    status: !ruby/struct:VCR::ResponseStatus 
+      code: 200
+      message: OK
+    headers: 
+      age: 
+      - "0"
+      cache-control: 
+      - public, max-age=21600
+      content-type: 
+      - text/json; charset=utf-8
+      date: 
+      - Tue, 03 Jan 2012 16:51:47 GMT
+      server: 
+      - nginx
+      status: 
+      - 200 OK
+      vary: 
+      - Accept-Encoding
+      via: 
+      - 1.1 varnish
+      x-cache: 
+      - MISS
+      x-frame-options: 
+      - sameorigin
+      x-varnish: 
+      - "1422466663"
+      x-varnish-sid: 
+      - tm-v-p-1100
+      x-xss-protection: 
+      - 1; mode=block
+      content-length: 
+      - "18"
+      connection: 
+      - keep-alive
+    body: "[\"Nothing found.\"]"
+    http_version: "1.1"

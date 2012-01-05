@@ -1,12 +1,4 @@
-ENV['MOTY_ENV'] = 'test'
-
-require 'rubygems'
-require 'minitest/autorun'
-require 'minitest/spec'
-require 'awesome_print'
-
-require_relative '../db'
-require_relative '../movie'
+require_relative '../spec_helper'
 
 describe Movie do
 

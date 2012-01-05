@@ -1,0 +1,44 @@
+--- 
+- !ruby/struct:VCR::HTTPInteraction 
+  request: !ruby/struct:VCR::Request 
+    method: :get
+    uri: http://api.themoviedb.org:80/2.1/Movie.search/en/json/<TMDB_KEY>/harry%20potter%20deathly%20hallows%202
+    body: 
+    headers: 
+  response: !ruby/struct:VCR::Response 
+    status: !ruby/struct:VCR::ResponseStatus 
+      code: 200
+      message: OK
+    headers: 
+      age: 
+      - "3928"
+      cache-control: 
+      - public, max-age=21600
+      content-type: 
+      - text/json; charset=utf-8
+      date: 
+      - Tue, 03 Jan 2012 16:48:41 GMT
+      server: 
+      - nginx
+      status: 
+      - 200 OK
+      vary: 
+      - Accept-Encoding
+      via: 
+      - 1.1 varnish
+      x-cache: 
+      - HIT
+      x-frame-options: 
+      - sameorigin
+      x-varnish: 
+      - 1422439687 1421899192
+      x-varnish-sid: 
+      - tm-v-p-1100
+      x-xss-protection: 
+      - 1; mode=block
+      content-length: 
+      - "2513"
+      connection: 
+      - keep-alive
+    body: "[{\"score\":6.8849707,\"popularity\":3,\"translated\":true,\"adult\":false,\"language\":\"en\",\"original_name\":\"Harry Potter and the Deathly Hallows: Part 2\",\"name\":\"Harry Potter and the Deathly Hallows: Part 2\",\"alternative_name\":\"Harry Potter 8\",\"movie_type\":\"movie\",\"id\":12445,\"imdb_id\":\"tt1201607\",\"url\":\"http://www.themoviedb.org/movie/12445\",\"votes\":46,\"rating\":8.4,\"certification\":\"PG-13\",\"overview\":\"The end begins as Harry, Ron, and Hermione go back to Hogwarts to find and destroy Voldemorts final horcruxes, but when Voldemort finds out about their mission, the biggest battle begins and life as they know it will never be the same again.\",\"released\":\"2011-07-15\",\"posters\":[{\"image\":{\"type\":\"poster\",\"size\":\"thumb\",\"height\":136,\"width\":92,\"url\":\"http://cf2.imgobject.com/t/p/w92/aMKUvXjgCrUGVDVo48v2YFxARNy.jpg\",\"id\":\"4ea61eb934f8633bdc00497b\"}},{\"image\":{\"type\":\"poster\",\"size\":\"w154\",\"height\":228,\"width\":154,\"url\":\"http://cf2.imgobject.com/t/p/w154/aMKUvXjgCrUGVDVo48v2YFxARNy.jpg\",\"id\":\"4ea61eb934f8633bdc00497b\"}},{\"image\":{\"type\":\"poster\",\"size\":\"cover\",\"height\":274,\"width\":185,\"url\":\"http://cf2.imgobject.com/t/p/w185/aMKUvXjgCrUGVDVo48v2YFxARNy.jpg\",\"id\":\"4ea61eb934f8633bdc00497b\"}},{\"image\":{\"type\":\"poster\",\"size\":\"w342\",\"height\":506,\"width\":342,\"url\":\"http://cf2.imgobject.com/t/p/w342/aMKUvXjgCrUGVDVo48v2YFxARNy.jpg\",\"id\":\"4ea61eb934f8633bdc00497b\"}},{\"image\":{\"type\":\"poster\",\"size\":\"mid\",\"height\":740,\"width\":500,\"url\":\"http://cf2.imgobject.com/t/p/w500/aMKUvXjgCrUGVDVo48v2YFxARNy.jpg\",\"id\":\"4ea61eb934f8633bdc00497b\"}},{\"image\":{\"type\":\"poster\",\"size\":\"original\",\"height\":1500,\"width\":1013,\"url\":\"http://cf2.imgobject.com/t/p/original/aMKUvXjgCrUGVDVo48v2YFxARNy.jpg\",\"id\":\"4ea61eb934f8633bdc00497b\"}}],\"backdrops\":[{\"image\":{\"type\":\"backdrop\",\"size\":\"thumb\",\"height\":169,\"width\":300,\"url\":\"http://cf2.imgobject.com/t/p/w300/oPmZDHPkdmhuvxYGmwtKcQefeNr.jpg\",\"id\":\"4ead2cd25e73d60b7a0017a0\"}},{\"image\":{\"type\":\"backdrop\",\"size\":\"poster\",\"height\":439,\"width\":780,\"url\":\"http://cf2.imgobject.com/t/p/w780/oPmZDHPkdmhuvxYGmwtKcQefeNr.jpg\",\"id\":\"4ead2cd25e73d60b7a0017a0\"}},{\"image\":{\"type\":\"backdrop\",\"size\":\"w1280\",\"height\":720,\"width\":1280,\"url\":\"http://cf2.imgobject.com/t/p/w1280/oPmZDHPkdmhuvxYGmwtKcQefeNr.jpg\",\"id\":\"4ead2cd25e73d60b7a0017a0\"}},{\"image\":{\"type\":\"backdrop\",\"size\":\"original\",\"height\":1080,\"width\":1920,\"url\":\"http://cf2.imgobject.com/t/p/original/oPmZDHPkdmhuvxYGmwtKcQefeNr.jpg\",\"id\":\"4ead2cd25e73d60b7a0017a0\"}}],\"version\":3288,\"last_modified_at\":\"2012-01-03 12:05:04 UTC\"}]"
+    http_version: "1.1"

@@ -1,14 +1,15 @@
-require_relative 'db'
-require_relative 'date_extensions'
+require_relative '../db'
+require_relative '../date_extensions'
 
 class Movie < ActiveRecord::Base
 
-  scope :unrated,        where(rating: nil)
-  scope :rated,          where('rating IS NOT NULL')
-  scope :with_rating,    proc { |rating| where(rating: rating) }
-  scope :best,           with_rating(4..5)
-  scope :worst,          with_rating(1..2)
-  scope :watched_before, proc { |bool| where(watched_before: bool) }
+  scope :unrated,               where(rating: nil)
+  scope :rated,                 where('rating IS NOT NULL')
+  scope :with_rating,           proc { |rating| where(rating: rating) }
+  scope :best,                  with_rating(4..5)
+  scope :worst,                 with_rating(1..2)
+  scope :watched_before,        proc { |bool| where(watched_before: bool) }
+  scope :without_release_dates, where(released_on: nil)
 
   # Order scopes.
   scope :by_name,   order(:sort_name)

@@ -62,10 +62,9 @@ end
 
 namespace :stats do
 
-  desc 'List movies. Optional year argument.'
+  desc 'List movies.'
   task :list, [:year] => :models do |t, args|
-    movies = Movie.by_name
-    movies = movies.watched_in(args.year.to_i) if args.year
+    movies = Movie.watched_in(args.year).by_name
     puts "#{movies.size} movies"
     movies.group_by(&:name).each do |name, movies|
       print "#{movies.first.listing}"
@@ -76,8 +75,7 @@ namespace :stats do
 
   # List best/worst of movies that I haven't watched before.
   task :best_or_worst, [:best_or_worst, :year] => :models do |t, args|
-    year = args.year.to_i
-    movies = Movie.watched_before(false).watched_in(year).send(args.best_or_worst).by_rating.by_name
+    movies = Movie.watched_before(false).watched_in(args.year).send(args.best_or_worst).by_rating.by_name
     movies.each do |movie|
       puts movie.listing
     end
@@ -85,17 +83,17 @@ namespace :stats do
 
   desc 'List best of year.'
   task :best_of, [:year] => :models do |t, args|
-    Rake::Task[:'moty:best_or_worst'].invoke(:best, args.year)
+    Rake::Task[:'stats:best_or_worst'].invoke(:best, args.year)
   end
 
   desc 'List worst of year.'
   task :worst_of, [:year] => :models do |t, args|
-    Rake::Task[:'moty:best_or_worst'].invoke(:worst, args.year)
+    Rake::Task[:'stats:best_or_worst'].invoke(:worst, args.year)
   end
 
   desc 'Count by grouping movies that I have watched before'
   task :watched_before_ratio, [:year] => :models do |t, args|
-    movies = Movie.all.group_by(&:watched_before)
+    movies = Movie.watched_in(args.year).group_by(&:watched_before)
     puts "watched before: #{movies[true].size}"
     puts "not watched before: #{movies[false].size}"
     puts "ratio: #{movies[true].size.to_f/movies[false].size.to_f}"

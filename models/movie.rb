@@ -28,7 +28,8 @@ class Movie < ActiveRecord::Base
 
     # Scope for year watched using date range.
     def watched_in(year)
-      date_range = Date.beginning_of_year(year)..Date.end_of_year(year)
+      raise 'Missing year' if year.blank?
+      date_range = Date.beginning_of_year(year.to_i)..Date.end_of_year(year.to_i)
       where(watched_on: date_range)
     end
 

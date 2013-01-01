@@ -3,5 +3,5 @@ require 'active_support/core_ext'
 require 'tmdb_party'
 require 'awesome_print'
 
-tmdb = TMDBParty::Base.new('73da8f822edb8f522a650c123e25f38e')
+tmdb = TMDBParty::Base.new(ENV.fetch('TMDB_KEY'))
 ap tmdb.search('harry potter')

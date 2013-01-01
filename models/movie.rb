@@ -1,5 +1,5 @@
-require_relative '../db'
-require_relative '../date_extensions'
+require_relative '../lib/date_extensions'
+require_relative '../lib/ics/event'
 
 class Movie < ActiveRecord::Base
 
@@ -18,6 +18,13 @@ class Movie < ActiveRecord::Base
   validates :rating, inclusion: {in: 1..5, allow_nil: true}
 
   class << self
+
+    def new_from_event(event)
+      new(
+        event_summary:  event.summary,
+        watched_on:     event.started_on.to_date,
+      )
+    end
 
     # Scope for year watched using date range.
     def watched_in(year)
@@ -38,12 +45,21 @@ class Movie < ActiveRecord::Base
 
   end
 
-  # Parse event summary with movie name and rating in parentheses,
-  # assign to name and rating..
-  def name_with_rating=(string)
-    match_data = string.match(/(?<name>.*) \((?<rating>\d)\)/)
-    self.name =   match_data[:name]
-    self.rating = match_data[:rating].to_i
+  # Parse event summary with format: title (rating, watched_before),
+  # assign to name, rating, watched_before.
+  def event_summary=(string)
+    match_data = string.match(%r{
+      (?<name>.*)
+      \(
+        (?<rating>\d),
+        \s*
+        (?<watched_before>[ny]+)
+      \)
+    }x)
+
+    self.name           = match_data[:name].strip
+    self.rating         = match_data[:rating].to_i
+    self.watched_before = match_data[:watched_before] == 'y' ? true : false
   end
 
   # Assign sort name after assigning name.
@@ -61,7 +77,7 @@ class Movie < ActiveRecord::Base
 
   # Remove leading 'The' and 'A'.
   def assign_sort_name
-    self.sort_name = name.sub /^The |A /, ''
+    self.sort_name = name.sub /^The |^A |^An/, ''
   end
 
 end

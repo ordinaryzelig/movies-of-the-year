@@ -6,11 +6,17 @@ describe Movie do
     ActiveRecord::Base.connection.execute 'delete from movies;'
   end
 
-  it '#name_with_rating= parses and assigns name and rating' do
-    name_with_rating = 'Harry Potter (4)'
-    movie = Movie.new(name_with_rating: name_with_rating)
+  it '.new_from_event returns new Movie object with data from event' do
+    event = ICS::Event.new(
+      summary: 'Harry Potter (4,y)',
+      dtstart: '2012-12-31 12:34',
+    )
+    movie = Movie.new_from_event(event)
+
     movie.name.must_equal 'Harry Potter'
     movie.rating.must_equal 4
+    movie.watched_before.must_equal true
+    movie.watched_on.must_equal Date.civil(2012, 12, 31)
   end
 
   it 'validates #rating to be nil or between 1 and 5' do
@@ -40,6 +46,15 @@ describe Movie do
     [movie1, movie2].each do |movie|
       movies.must_include movie
     end
+  end
+
+  it '#event_summary= parses and assigns title with rating and watched_before' do
+    summary = 'Harry Potter (4,y)'
+    movie = Movie.new(event_summary: summary)
+
+    movie.name.must_equal 'Harry Potter'
+    movie.rating.must_equal 4
+    movie.watched_before.must_equal true
   end
 
 end

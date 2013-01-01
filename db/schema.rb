@@ -1,7 +1,6 @@
 # Create DB.
 
 require_relative 'db'
-require 'benchmark'
 
 ActiveRecord::Schema.define do
 

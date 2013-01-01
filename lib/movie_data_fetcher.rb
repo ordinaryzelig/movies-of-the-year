@@ -6,7 +6,7 @@
 require 'active_support/core_ext'
 require 'tmdb_party'
 
-TMDB = TMDBParty::Base.new(ENV['TMDB_KEY'])
+TMDB = TMDBParty::Base.new(ENV.fetch('TMDB_KEY'))
 
 module MovieDataFetcher
 
@@ -24,10 +24,12 @@ module MovieDataFetcher
         puts "#{i + 1}. #{movie.name} (#{movie.released}, #{movie.imdb_id})"
       end
       print "> "
-      input = STDIN.gets.chomp.to_i
-      valid_input = (1..movies.size).include?(input)
-      if valid_input
-        movie = movies[input - 1]
+      input = STDIN.gets.chomp
+      case
+      when (1..movies.size).include?(input.to_i)
+        movie = movies[input.to_i - 1]
+      when input == 'n'
+        :next
       else
         # Recurse.
         prompt(movies)

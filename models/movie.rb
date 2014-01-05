@@ -50,9 +50,9 @@ class Movie < ActiveRecord::Base
   # assign to name, rating, watched_before.
   def event_summary=(string)
     match_data = string.match(%r{
-      (?<name>.*)
+      (?<name>.+)
       \(
-        (?<rating>\d),
+        (?<rating>\d).*,
         \s*
         (?<watched_before>[ny]+)
       \)

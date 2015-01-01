@@ -1,7 +1,3 @@
-# Create DB.
-
-require_relative 'db'
-
 ActiveRecord::Schema.define do
 
   create_table :movies do |t|

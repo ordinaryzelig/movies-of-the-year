@@ -1,4 +1,11 @@
+## Run
+
 * export calendar into `movies.ics`.
-* `bundle exec ruby script/import.rb`.
-* `bundle exec rake release_dates`
-* `bundle exec rake -T | ack stats`
+* `ruby script/import.rb`.
+* `rake release_dates`
+* `rake -T | ack stats`
+
+## Test
+
+* `rake db:test:prepare`
+* `rake`

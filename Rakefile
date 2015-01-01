@@ -10,6 +10,7 @@ end
 # Connect to DB.
 task :connect do
   require_relative 'db/db'
+  DB.connect
 end
 
 task :models do
@@ -53,9 +54,24 @@ end
 
 namespace :db do
 
+  task :require do
+    require_relative 'db/db'
+  end
+
   desc 'Clear data in db.'
-  task :reset => :connect do
-    ActiveRecord::Base.connection.execute 'delete from movies;'
+  task :reset => :require do
+    DB.reset
+  end
+
+  namespace :test do
+
+    desc 'Setup test db'
+    task :prepare do
+      ENV['MOTY_ENV'] = 'test'
+      Rake::Task['db:require'].invoke
+      DB.schema
+    end
+
   end
 
 end

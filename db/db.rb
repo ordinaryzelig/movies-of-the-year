@@ -1,8 +1,31 @@
-require 'active_record'
+ENV['MOTY_ENV'] ||= 'dev'
 
-db_name = ENV['MOTY_ENV'] == 'test' ? 'movies.test.sqlite3' : 'movies.sqlite3'
+module DB
 
-ActiveRecord::Base.establish_connection(
-  :adapter => "sqlite3",
-  :database => "db/#{db_name}",
-)
+  module_function
+
+  def connect
+    require 'active_record'
+    ActiveRecord::Base.establish_connection(
+      :adapter => "sqlite3",
+      :database => path,
+    )
+  end
+
+  def reset
+    require 'fileutils'
+    FileUtils.rm(path, force: true)
+    schema
+  end
+
+  def path
+    __dir__ + "/movies.#{ENV.fetch('MOTY_ENV')}.sqlite3"
+  end
+
+  def schema
+    connect
+    require_relative 'schema'
+  end
+
+end
+

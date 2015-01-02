@@ -7,10 +7,9 @@ describe Movie do
   end
 
   it '.new_from_event returns new Movie object with data from event' do
-    event = ICS::Event.new(
-      summary: 'Harry Potter (4,y)',
-      dtstart: '2012-12-31 12:34',
-    )
+    event = Icalendar::Event.new
+    event.summary = 'Harry Potter ; 4. y'
+    event.dtstart = DateTime.parse('2012-12-31 12:34')
     movie = Movie.new_from_event(event)
 
     movie.name.must_equal 'Harry Potter'
@@ -48,13 +47,35 @@ describe Movie do
     end
   end
 
-  it '#event_summary= parses and assigns title with rating and watched_before' do
-    summary = 'Harry Potter (4,y)'
-    movie = Movie.new(event_summary: summary)
+  describe 'event parsing' do
 
-    movie.name.must_equal 'Harry Potter'
-    movie.rating.must_equal 4
-    movie.watched_before.must_equal true
+    def self.it_parses(summary, expected_atts)
+      it "parses #{summary}" do
+        movie = Movie.new(event_summary: summary)
+        expected_atts.each do |att, value|
+          movie.public_send(att).must_equal value
+        end
+      end
+    end
+
+    it_parses 'Harry Potter ; 4. y. y',
+      name: 'Harry Potter',
+      rating: 4,
+      watched_before: true,
+      new_this_year: true
+
+    it_parses 'Harry Potter (4,y,y)',
+      name: 'Harry Potter',
+      rating: 4,
+      watched_before: true,
+      new_this_year: true
+
+    it_parses 'Harry Potter (extended) (4,y,y)',
+      name: 'Harry Potter (extended)',
+      rating: 4,
+      watched_before: true,
+      new_this_year: true
+
   end
 
 end

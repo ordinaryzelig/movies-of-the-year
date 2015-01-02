@@ -17,39 +17,10 @@ task :models do
   require_relative 'models'
 end
 
-desc 'Fetch and assign release dates'
-task :release_dates => :models do |t, args|
-  require_relative 'lib/movie_data_fetcher'
-  require 'awesome_print'
-
-  Movie.without_release_dates.each do |movie|
-    print movie.name
-    tmdb_movies = MovieDataFetcher.search(movie.name)
-
-    tmdb_movie = case tmdb_movies.size
-    when 0
-      # Nothing found, skip.
-      puts " <not found>"
-      next
-    when 1
-      # Only match, use this one.
-      tmdb_movies.first
-    else
-      # Prompt for user input.
-      prompted = true
-      puts " (watched on #{movie.watched_on})"
-      MovieDataFetcher.prompt(tmdb_movies)
-    end
-
-    next if tmdb_movie == :next
-
-    if prompted
-      print movie.name
-    end
-
-    movie.update_attribute :released_on, tmdb_movie.released
-    puts " (#{movie.released_on})"
-  end
+desc 'Import from movies.ics'
+task :import, [:year] do |t, args|
+  require_relative 'script/import'
+  Import.(Integer(args.year))
 end
 
 namespace :db do
@@ -69,18 +40,33 @@ namespace :db do
     task :prepare do
       ENV['MOTY_ENV'] = 'test'
       Rake::Task['db:require'].invoke
-      DB.schema
+      Rake::Task['db:reset'].invoke
     end
 
   end
 
 end
 
+desc 'List all stats'
+task :stats, [:year] do |t, args|
+  [
+    'best_of',
+    'worst_of',
+    'watched_before_ratio',
+    'list',
+  ].each do |task|
+    stats_task = "stats:#{task}"
+    puts stats_task
+    Rake::Task[stats_task].invoke(*args)
+    puts
+  end
+end
+
 namespace :stats do
 
   desc 'List movies.'
   task :list, [:year] => :models do |t, args|
-    movies = Movie.watched_in(args.year).by_name
+    movies = Movie.watched_in(Integer(args.year)).by_name
     puts "#{movies.size} movies"
     movies.group_by(&:name).each do |name, movies|
       print "#{movies.first.listing}"
@@ -89,27 +75,32 @@ namespace :stats do
     end
   end
 
-  # List best/worst of movies that I haven't watched before.
-  task :best_or_worst, [:best_or_worst, :year] => :models do |t, args|
-    movies = Movie.watched_before(false).watched_in(args.year).send(args.best_or_worst).by_rating.by_name
+  desc 'List best of year.'
+  task :best_of, [:year] => :models do |t, args|
+    best_or_worst :best, args.year
+  end
+
+  desc 'List worst of year.'
+  task :worst_of, [:year] => :models do |t, args|
+    best_or_worst :worst, args.year
+  end
+
+  def best_or_worst(best_or_worst, year)
+    movies =
+      Movie
+        .watched_before(false)
+        .watched_in(Integer(year))
+        .send(best_or_worst)
+        .by_rating
+        .by_name
     movies.each do |movie|
       puts movie.listing
     end
   end
 
-  desc 'List best of year.'
-  task :best_of, [:year] => :models do |t, args|
-    Rake::Task[:'stats:best_or_worst'].invoke(:best, args.year)
-  end
-
-  desc 'List worst of year.'
-  task :worst_of, [:year] => :models do |t, args|
-    Rake::Task[:'stats:best_or_worst'].invoke(:worst, args.year)
-  end
-
   desc 'Count by grouping movies that I have watched before'
   task :watched_before_ratio, [:year] => :models do |t, args|
-    movies = Movie.watched_in(args.year).group_by(&:watched_before)
+    movies = Movie.watched_in(Integer(args.year)).group_by(&:watched_before)
     puts "watched before: #{movies[true].size}"
     puts "not watched before: #{movies[false].size}"
     puts "ratio: #{movies[true].size.to_f/movies[false].size.to_f}"

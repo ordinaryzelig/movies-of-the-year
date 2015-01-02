@@ -1,30 +1,38 @@
-require_relative '../db/db'
 require_relative '../models/movie'
-require 'ics'
 require 'awesome_print'
 
-# Import movies from .ics.
-events = ICS::Event.file(File.open('movies.ics'))
+module Import
 
-year = ARGV.fetch(0) { raise "Missing year arg" }
+  module_function
 
-# Filter movies from this year.
-events.select! { |event| event.dtstart.starts_with?(year) }
+  def call(year)
+    # Import movies from .ics.
+    events =
+      Icalendar
+        .parse(File.open('movies.ics'))
+        .first
+        .events
 
-Movie.transaction do
-  # Create movies in db.
-  events.each do |event|
-    puts event.summary
-    movie = Movie.new_from_event(event)
-    if movie.valid?
-      movie.save!
-    else
-      ap movie
+    # Filter movies from this year.
+    events.select! { |event| event.dtstart.year == year }
+
+    Movie.transaction do
+      # Create movies in db.
+      events.each do |event|
+        begin
+          movie = Movie.new_from_event(event)
+        rescue
+          ap "Error with #{event.summary}"
+          raise
+        end
+        puts movie
+        movie.save!
+      end
     end
-  end
-  #raise ActiveRecord::Rollback
-end
 
-# Output.
-puts "#{events.size} imported."
-puts "#{Movie.count} movies total."
+    # Output.
+    puts "#{events.size} imported."
+    puts "#{Movie.count} movies total."
+  end
+
+end

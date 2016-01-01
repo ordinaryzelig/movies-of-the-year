@@ -22,10 +22,9 @@ module Import
         begin
           movie = Movie.new_from_event(event)
         rescue
-          ap "Error with #{event.summary}"
+          puts "Error with #{event.summary.inspect}"
           raise
         end
-        puts movie
         movie.save!
       end
     end

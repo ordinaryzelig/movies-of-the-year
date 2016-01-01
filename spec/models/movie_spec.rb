@@ -8,7 +8,7 @@ describe Movie do
 
   it '.new_from_event returns new Movie object with data from event' do
     event = Icalendar::Event.new
-    event.summary = 'Harry Potter ; 4. y'
+    event.summary = 'Harry Potter - 4. y'
     event.dtstart = DateTime.parse('2012-12-31 12:34')
     movie = Movie.new_from_event(event)
 
@@ -58,20 +58,8 @@ describe Movie do
       end
     end
 
-    it_parses 'Harry Potter ; 4. y. y',
+    it_parses 'Harry Potter - 4yy',
       name: 'Harry Potter',
-      rating: 4,
-      watched_before: true,
-      new_this_year: true
-
-    it_parses 'Harry Potter (4,y,y)',
-      name: 'Harry Potter',
-      rating: 4,
-      watched_before: true,
-      new_this_year: true
-
-    it_parses 'Harry Potter (extended) (4,y,y)',
-      name: 'Harry Potter (extended)',
       rating: 4,
       watched_before: true,
       new_this_year: true

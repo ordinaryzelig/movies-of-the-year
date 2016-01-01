@@ -38,8 +38,8 @@ class Movie < ActiveRecord::Base
   # Parse event summary with format: title (rating, watched_before),
   # assign to name, rating, watched_before.
   def event_summary=(string)
-    *names, self.stats = string.split(/;|\(/)
-    self.name = names.join('(')
+    *names, self.stats = string.split(/\s*-\s*/).tap(&method(:puts))
+    self.name = names.join(' - ')
   end
 
   # Assign sort name after assigning name.
@@ -53,7 +53,7 @@ class Movie < ActiveRecord::Base
       rating,
       watched_before,
       new_this_year,
-    ) = stats_string.scan /\w|\d/
+    ) = stats_string.scan /\w/
     self.rating = Integer(rating)
     self.watched_before = string_to_boolean(watched_before)
     self.new_this_year = string_to_boolean(watched_before)

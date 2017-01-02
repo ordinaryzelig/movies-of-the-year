@@ -1,11 +1,8 @@
-ENV['MOTY_ENV'] ||= 'dev'
-
 module DB
 
   module_function
 
   def connect
-    require 'active_record'
     ActiveRecord::Base.establish_connection(
       :adapter => "sqlite3",
       :database => path,

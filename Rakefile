@@ -3,18 +3,12 @@ require 'rake/testtask'
 task :default => :test
 
 Rake::TestTask.new(:test) do |t|
-  t.libs << 'spec'
+  #t.libs << 'spec'
   t.pattern = 'spec/**/*_spec.rb'
 end
 
-# Connect to DB.
-task :connect do
-  require_relative 'db/db'
-  DB.connect
-end
-
-task :models do
-  require_relative 'models'
+task :environment do
+  require_relative 'init'
 end
 
 desc 'Import from movies.ics'
@@ -25,12 +19,8 @@ end
 
 namespace :db do
 
-  task :require do
-    require_relative 'db/db'
-  end
-
   desc 'Clear data in db.'
-  task :reset => :require do
+  task :reset => :environment do
     DB.reset
   end
 
@@ -39,7 +29,7 @@ namespace :db do
     desc 'Setup test db'
     task :prepare do
       ENV['MOTY_ENV'] = 'test'
-      Rake::Task['db:require'].invoke
+      Rake::Task['db:environment'].invoke
       Rake::Task['db:reset'].invoke
     end
 
@@ -65,7 +55,7 @@ end
 namespace :stats do
 
   desc 'List movies.'
-  task :list, [:year] => :models do |t, args|
+  task :list, [:year] => :environment do |t, args|
     movies = Movie.watched_in(Integer(args.year)).by_name
     puts "#{movies.size} movies"
     movies.group_by(&:name).each do |name, movies|
@@ -76,12 +66,12 @@ namespace :stats do
   end
 
   desc 'List best of year.'
-  task :best_of, [:year] => :models do |t, args|
+  task :best_of, [:year] => :environment do |t, args|
     best_or_worst :best, args.year
   end
 
   desc 'List worst of year.'
-  task :worst_of, [:year] => :models do |t, args|
+  task :worst_of, [:year] => :environment do |t, args|
     best_or_worst :worst, args.year
   end
 
@@ -99,7 +89,7 @@ namespace :stats do
   end
 
   desc 'Count by grouping movies that I have watched before'
-  task :watched_before_ratio, [:year] => :models do |t, args|
+  task :watched_before_ratio, [:year] => :environment do |t, args|
     movies = Movie.watched_in(Integer(args.year)).group_by(&:watched_before)
     puts "watched before: #{movies[true].size}"
     puts "not watched before: #{movies[false].size}"

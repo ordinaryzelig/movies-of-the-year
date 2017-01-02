@@ -1,20 +1,15 @@
-require_relative '../db/db'
-DB.connect
-require_relative '../lib/date_extensions'
-require          'icalendar'
-
 class Movie < ActiveRecord::Base
 
-  scope :unrated,               where(rating: nil)
-  scope :rated,                 where('rating IS NOT NULL')
-  scope :with_rating,           proc { |rating| where(rating: rating) }
-  scope :best,                  with_rating(4..5)
-  scope :worst,                 with_rating(1..2)
-  scope :watched_before,        proc { |bool| where(watched_before: bool) }
+  scope :unrated,        -> { where(rating: nil) }
+  scope :rated,          -> { where('rating IS NOT NULL') }
+  scope :with_rating,    -> (rating) { where(rating: rating) }
+  scope :best,           -> { with_rating(4..5) }
+  scope :worst,          -> { with_rating(1..2) }
+  scope :watched_before, -> (bool) { where(watched_before: bool) }
 
   # Order scopes.
-  scope :by_name,   order(:sort_name)
-  scope :by_rating, order(:rating)
+  scope :by_name,   -> { order(:sort_name) }
+  scope :by_rating, -> { order(:rating) }
 
   validates :rating, inclusion: {in: 1..5, allow_nil: true}
 
@@ -38,7 +33,7 @@ class Movie < ActiveRecord::Base
   # Parse event summary with format: title (rating, watched_before),
   # assign to name, rating, watched_before.
   def event_summary=(string)
-    *names, self.stats = string.split(/\s*-\s*/).tap(&method(:puts))
+    *names, self.stats = string.split(/\s*-\s*/)
     self.name = names.join(' - ')
   end
 
@@ -52,7 +47,6 @@ class Movie < ActiveRecord::Base
     (
       rating,
       watched_before,
-      new_this_year,
     ) = stats_string.scan /\w/
     self.rating = Integer(rating)
     self.watched_before = string_to_boolean(watched_before)

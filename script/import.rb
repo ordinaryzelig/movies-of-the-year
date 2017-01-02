@@ -1,5 +1,4 @@
-require_relative '../models/movie'
-require 'awesome_print'
+require_relative '../init'
 
 module Import
 
@@ -8,8 +7,8 @@ module Import
   def call(year)
     # Import movies from .ics.
     events =
-      Icalendar
-        .parse(File.open('movies.ics'))
+      Icalendar::Calendar
+        .parse(File.open('tmp/movies.ics'))
         .first
         .events
 

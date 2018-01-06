@@ -21,11 +21,13 @@ module Import
         begin
           movie = Movie.new_from_event(event)
         rescue
+          @rollback = true
           puts "Error with #{event.summary.inspect}"
-          raise
         end
         movie.save!
       end
+
+      raise ActiveRecord::ROLLBACK if @rollback
     end
 
     # Output.

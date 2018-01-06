@@ -1,6 +1,6 @@
 ## Run
 
-* export calendar into `movies.ics`.
+* export calendar into `tmp/movies.ics`.
 * `rake import[YEAR] stats[YEAR] stats:list[YEAR]`.
 
 ## Test

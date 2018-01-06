@@ -29,7 +29,7 @@ namespace :db do
     desc 'Setup test db'
     task :prepare do
       ENV['MOTY_ENV'] = 'test'
-      Rake::Task['db:environment'].invoke
+      Rake::Task['environment'].invoke
       Rake::Task['db:reset'].invoke
     end
 

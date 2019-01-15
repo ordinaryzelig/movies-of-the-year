@@ -27,12 +27,14 @@ module Import
         end
       end
 
-      raise ActiveRecord::Rollback if @rollback
+      if @rollback
+        raise ActiveRecord::Rollback
+      else
+        # Output.
+        puts "#{events.size} imported."
+        puts "#{Movie.count} movies total."
+      end
     end
-
-    # Output.
-    puts "#{events.size} imported."
-    puts "#{Movie.count} movies total."
   end
 
 end

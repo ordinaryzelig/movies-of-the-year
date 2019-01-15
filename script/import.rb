@@ -20,14 +20,14 @@ module Import
       events.each do |event|
         begin
           movie = Movie.new_from_event(event)
+          movie.save!
         rescue
           @rollback = true
           puts "Error with #{event.summary.inspect}"
         end
-        movie.save!
       end
 
-      raise ActiveRecord::ROLLBACK if @rollback
+      raise ActiveRecord::Rollback if @rollback
     end
 
     # Output.

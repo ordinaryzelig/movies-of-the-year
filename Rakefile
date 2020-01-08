@@ -90,10 +90,10 @@ namespace :stats do
 
   desc 'Count by grouping movies that I have watched before'
   task :watched_before_ratio, [:year] => :environment do |t, args|
-    movies = Movie.watched_in(Integer(args.year)).group_by(&:watched_before)
-    puts "watched before: #{movies[true].size}"
-    puts "not watched before: #{movies[false].size}"
-    puts "ratio: #{movies[true].size.to_f/movies[false].size.to_f}"
+    watched_before, new_movies = Movie.watched_in(Integer(args.year)).partition(&:watched_before)
+    puts "watched before: #{watched_before.size}"
+    puts "not watched before: #{new_movies.size}"
+    puts "ratio: #{watched_before.size.to_f/new_movies.size.to_f}"
   end
 
 end
